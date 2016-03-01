@@ -55,10 +55,7 @@ perl -pe 's/nifi.web.http.port=8080/nifi.web.http.port=9090/' -i /opt/nifi-0.5.1
 	A big thank you to 
 	<a href="http://hl7api.sourceforge.net/">HAPI</a> for their excellent library to parse and create HL7 messages on which my code relies. The generator creates a very simple MDM^T02 that includes an in-line note from a doctor.  MDM stands for Medical Document Management, and T02 specifies that this is a message
 for a new document.  For more details about this message type read 
-	<a href="http://corepointhealth.com/resource-center/hl7-resources/hl7-mdm-message">this</a>
-</p>
-<p>
-	 document.  Here is a sample message for Beatrice Cunningham:
+	<a href="http://corepointhealth.com/resource-center/hl7-resources/hl7-mdm-message">this</a> document.  Here is a sample message for Beatrice Cunningham:
 </p>
 <pre>
 MSH|^~\&|||||20160229002413.415-0500||MDM^T02|7|P|2.3
@@ -83,23 +80,16 @@ mkdir -p /var/ftp/pub
 cd /var/ftp/pub
 wget https://raw.githubusercontent.com/vzlatkin/DoctorsNotes/master/target/hl7-generator-1.0-SNAPSHOT-shaded.jar
 mkdir -p /tmp/hl7-messages/
-chown nifi:nifi /tmp/hl7-messages/
 /usr/lib/jvm/jre-1.8.0/bin/java -cp hl7-generator-1.0-SNAPSHOT-shaded.jar  com.hortonworks.example.Main 1 /tmp/hl7-messages
+chown -R nifi:nifi /tmp/hl7-messages/
 </pre>
 <h3>4. Create a Solr dashboard to visualize the results</h3>
-<p>
-Before starting Solr we need to create a chroot for it in Zookeeper.
-</p>
-<pre>
-[root@sandbox ~]# zookeeper-client
-[zk: localhost:2181(CONNECTED) 0] create /solr []
-</pre>
 <p>
 	Now we need to configure Solr to ignore some words that don't add value.  We do this by modifying 
 	<em>stopwords.txt</em>
 </p>
 <pre>
-cat &lt;&lt;EOF &gt; /opt/lucidworks-hdpsearch/solr/server/solr/configsets/data_driven_schema_configs/conf/stopwords.txt
+cat  &lt;&lt;EOF &gt; /opt/lucidworks-hdpsearch/solr/server/solr/configsets/data_driven_schema_configs/conf/stopwords.txt
 adjustments
 Admitted
 because
@@ -133,8 +123,8 @@ EOF
 Next, we download the custom dashboard and start Solr in cloud mode
 <pre>
 export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk.x86_64
-wget https://raw.githubusercontent.com/vzlatkin/DoctorsNotes/master/other/Chronic%20Symptoms%20(Solr).json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
-/opt/lucidworks-hdpsearch/solr/bin/solr start -c -z localhost:2181/solr
+wget "https://raw.githubusercontent.com/vzlatkin/DoctorsNotes/master/other/Chronic%20Symptoms%20(Solr).json" -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
+/opt/lucidworks-hdpsearch/solr/bin/solr start -c -z localhost:2181
 /opt/lucidworks-hdpsearch/solr/bin/solr create -c hl7_messages -d data_driven_schema_configs -s 1 -rf 1
 </pre>
 <h3>5. Create and execute a new NiFi flow</h3>
