@@ -13,7 +13,7 @@ The steps in this article will help you address exactly this problem by creating
 	In the middle of the dashboard is a TagCloud where the more frequently mentioned symptoms for a selected patient appear larger than others.  Because this project relies on randomly generated data, some interesting results are possible.  In this case, I got lucky and all the symptoms seem related to the patient's most frequent complaint: Morning Alcohol Drinking. The list of all possible symptoms comes from Google searches.
 </p>
 <p>
-	<img src="/storage/attachments/2465-frequent-symptoms-screenshot.png">
+	<img src="/storage/attachments/2483-frequent-symptoms-screenshot.png">
 </p>
 <h2>
 Summary of steps
